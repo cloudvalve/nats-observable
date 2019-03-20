@@ -1,0 +1,21 @@
+{
+  "name": "nats-observables",
+  "description": "",
+  "version": "1.0.0",
+  "author": "André König <hey@andrekoenig.dev>",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "node-nats-streaming": "0.0.52",
+    "verror": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^11.11.4",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.4000"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+}
