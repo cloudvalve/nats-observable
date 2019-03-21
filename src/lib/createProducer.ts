@@ -1,26 +1,45 @@
+/*
+ * nats-observable
+ *
+ * MIT Licensed
+ *
+ */
+
+/**
+ * @author André König <hey@andrekoenig.dev>
+ *
+ */
+
 import * as VError from "verror";
-import { Observable } from "rxjs";
+import * as cuid from "cuid";
 
 import { createClient } from "./createClient";
 
 interface IProducerOptions {
   broker: string;
-  name?: string;
+  name: string;
+}
+
+type GUID = string;
+type MessageContents = string | Buffer | Uint8Array;
+
+interface IProducer {
+  toChannel: (name: string) => (message: MessageContents) => Promise<GUID>;
 }
 
 // !TODO: Create proper interface for the ProducerAPI
-const createProducer = (options: IProducerOptions) => {
-  const toChannel = (name: string) => (message: any): Promise<string> =>
+const createProducer = (options: IProducerOptions): IProducer => {
+  const toChannel = (name: string) => (
+    message: MessageContents
+  ): Promise<string> =>
     new Promise<string>(async (resolve, reject) => {
-      const client = await createClient({
+      const client = createClient({
         clusterId: options.broker,
-        clientId:
-          // TODO: This could colidate if one creates a lot of producers at the same time
-          options.name || `nats-observable-producer-${Date.now().toString()}`
+        // ! Append a random id to the clientId to prevent collisions
+        clientId: `${options.name}-${cuid()}`
       });
 
       client.once("connect", () =>
-        // !TODO: Promisify
         client.publish(name, message, (err: Error, guid: string) => {
           client.close();
 

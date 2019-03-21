@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "cuid": "^2.1.6",
     "node-nats-streaming": "0.0.52",
     "rxjs": "^6.4.0",
     "verror": "^1.10.0"

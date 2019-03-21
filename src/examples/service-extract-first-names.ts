@@ -1,8 +1,12 @@
-# nats-observable
+import { map, concatMap, tap } from "rxjs/operators";
 
-## Usage
+import { createConsumer, createProducer } from "../lib";
 
-```js
+interface IUser {
+  firstName: string;
+  lastName: string;
+}
+
 const app = async () => {
   const { fromChannel } = createConsumer({
     name: "input-extract-first-names-instance-00",
@@ -30,4 +34,3 @@ app().catch((err: Error) => {
 
   console.error(err.message);
 });
-```

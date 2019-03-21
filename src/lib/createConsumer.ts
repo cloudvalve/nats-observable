@@ -1,18 +1,32 @@
+/*
+ * nats-observable
+ *
+ * MIT Licensed
+ *
+ */
+
+/**
+ * @author André König <hey@andrekoenig.dev>
+ *
+ */
+
 import * as VError from "verror";
 import { Observable } from "rxjs";
 
 import { createClient } from "./createClient";
-import { Subscription } from "node-nats-streaming";
+import { Message } from "node-nats-streaming";
 
 interface IConsumerOptions {
   broker: string;
   name: string;
 }
 
-// !TODO: Create proper interface for the ConsumerAPI
+interface IConsumer {
+  fromChannel: (name: string) => Observable<Message>;
+}
 
-const createConsumer = (options: IConsumerOptions) => {
-  const fromChannel = (name: string): Observable<any> =>
+const createConsumer = (options: IConsumerOptions): IConsumer => {
+  const fromChannel = (name: string): Observable<Message> =>
     new Observable(stream => {
       const client = createClient({
         clusterId: options.broker,
@@ -25,24 +39,21 @@ const createConsumer = (options: IConsumerOptions) => {
         )
       );
 
-      client.once("disconnect", () => {
-        // We have to call `close` because of internal cleanup routines in the NATS client
-        client.close();
+      client.once("disconnect", () =>
         stream.error(
           new VError(
             `Broker connection has been terminated. Is the broker offline?`
           )
-        );
-      });
+        )
+      );
 
       client.once("connect", () => {
-        const subscription = client.subscribe(
-          name,
-          client
-            .subscriptionOptions()
-            .setDeliverAllAvailable()
-            .setDurableName(options.name)
-        );
+        const subscriptionOpts = client
+          .subscriptionOptions()
+          .setDeliverAllAvailable()
+          .setDurableName(options.name);
+
+        const subscription = client.subscribe(name, subscriptionOpts);
 
         subscription.on("message", message => stream.next(message));
       });
