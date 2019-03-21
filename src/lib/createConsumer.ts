@@ -1,7 +1,8 @@
-import { Observable } from "rxjs";
 import * as VError from "verror";
+import { Observable } from "rxjs";
 
 import { createClient } from "./createClient";
+import { Subscription } from "node-nats-streaming";
 
 interface IConsumerOptions {
   broker: string;
@@ -10,30 +11,42 @@ interface IConsumerOptions {
 
 // !TODO: Create proper interface for the ConsumerAPI
 
-const createConsumer = async (options: IConsumerOptions) => {
-  const client = await createClient({
-    clusterId: options.broker,
-    clientId: options.name
-  });
+const createConsumer = (options: IConsumerOptions) => {
+  const fromChannel = (name: string): Observable<any> =>
+    new Observable(stream => {
+      const client = createClient({
+        clusterId: options.broker,
+        clientId: options.name
+      });
 
-  const fromChannel = (name: string): Observable<any> => {
-    const observable = new Observable(subscriber => {
-      const subscription = client.subscribe(
-        name,
-        client
-          .subscriptionOptions()
-          .setDeliverAllAvailable()
-          .setDurableName(options.name)
+      client.once("error", err =>
+        stream.error(
+          new VError(err, `failed to consume message from channel "${name}"`)
+        )
       );
 
-      subscription.on("message", message => subscriber.next(message));
+      client.once("disconnect", () => {
+        // We have to call `close` because of internal cleanup routines in the NATS client
+        client.close();
+        stream.error(
+          new VError(
+            `Broker connection has been terminated. Is the broker offline?`
+          )
+        );
+      });
 
-      // !TODO: Handle errors properly
-      // !TODO: Configure manual acks; maybe possible to add another subscription?
+      client.once("connect", () => {
+        const subscription = client.subscribe(
+          name,
+          client
+            .subscriptionOptions()
+            .setDeliverAllAvailable()
+            .setDurableName(options.name)
+        );
+
+        subscription.on("message", message => stream.next(message));
+      });
     });
-
-    return observable;
-  };
 
   return { fromChannel };
 };

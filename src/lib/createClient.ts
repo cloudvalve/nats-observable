@@ -5,15 +5,8 @@ interface IOptions {
   clientId: string;
 }
 
+// !TODO: The `any` typing is because of https://github.com/nats-io/node-nats-streaming/issues/98
 const createClient = ({ clusterId, clientId }: IOptions) =>
-  new Promise<nats.Stan>(resolve => {
-    const stan = nats.connect(clusterId, clientId);
-
-    stan.on("connect", () => resolve(stan));
-
-    stan.on("error", () => console.log("error"));
-    stan.on("timeout", () => console.log("timeout"));
-    stan.on("close", () => console.log("close"));
-  });
+  nats.connect(clusterId, clientId, { reconnect: false } as any);
 
 export { createClient };

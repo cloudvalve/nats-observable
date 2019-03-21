@@ -4,8 +4,7 @@ import * as operators from "rxjs/operators";
 import { createProducer } from "./lib/createProducer";
 
 const app = async () => {
-  console.log("BEFORE");
-  const { fromChannel } = await createConsumer({
+  const { fromChannel } = createConsumer({
     broker: "test-cluster",
     name: "uppercase-first-name-03"
   });
@@ -14,7 +13,7 @@ const app = async () => {
     broker: "test-cluster"
   });
 
-  fromChannel("user-v2")
+  await fromChannel("user-v2")
     .pipe(
       operators.map(message => message.getData()),
       operators.map(event => JSON.parse(event)),
@@ -28,8 +27,8 @@ const app = async () => {
           payload.firstName.charAt(0).toUpperCase() === "A" &&
           payload.age > 80000
       ),
-      operators.map(payload => JSON.stringify(payload)),
-      operators.concatMap(toChannel("user-v2-first-names-starting-with-a"))
+      operators.map(payload => JSON.stringify(payload))
+      // operators.concatMap(toChannel("user-v2-first-names-starting-with-a"))
     )
     .toPromise();
 };
@@ -38,5 +37,5 @@ app().catch(err => {
   process.exitCode = 1;
 
   console.error("ERRRRRRROOOOOOOOOOOR");
-  console.error(err.message);
+  console.log(err.message);
 });
