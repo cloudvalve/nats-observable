@@ -4,29 +4,39 @@ import * as operators from "rxjs/operators";
 import { createProducer } from "./lib/createProducer";
 
 const app = async () => {
+  console.log("BEFORE");
   const { fromChannel } = await createConsumer({
     broker: "test-cluster",
-    name: "uppercase-first-name-01"
+    name: "uppercase-first-name-03"
   });
 
   const { toChannel } = createProducer({
     broker: "test-cluster"
   });
 
-  fromChannel("user-v1")
+  fromChannel("user-v2")
     .pipe(
       operators.map(message => message.getData()),
       operators.map(event => JSON.parse(event)),
       operators.map(event => event.payload),
-      operators.map(payload => payload.firstName),
-      operators.filter(firstName => firstName.charAt(0).toUpperCase() === "A"),
-      operators.concatMap(toChannel("user-v1-first-names-starting-with-a"))
+      operators.map(payload => ({
+        firstName: payload.firstName,
+        age: payload.age
+      })),
+      operators.filter(
+        payload =>
+          payload.firstName.charAt(0).toUpperCase() === "A" &&
+          payload.age > 80000
+      ),
+      operators.map(payload => JSON.stringify(payload)),
+      operators.concatMap(toChannel("user-v2-first-names-starting-with-a"))
     )
-    .subscribe(console.log);
+    .toPromise();
 };
 
 app().catch(err => {
   process.exitCode = 1;
 
+  console.error("ERRRRRRROOOOOOOOOOOR");
   console.error(err.message);
 });

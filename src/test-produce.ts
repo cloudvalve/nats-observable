@@ -3,10 +3,6 @@ import { createProducer } from "./lib/createProducer";
 import * as faker from "faker";
 
 const app = async () => {
-  const { toChannel } = createProducer({
-    broker: "test-cluster"
-  });
-
   let id = 0;
 
   while (true) {
@@ -15,14 +11,24 @@ const app = async () => {
       payload: {
         id,
         firstName: faker.name.firstName(),
-        lastName: faker.name.lastName()
+        lastName: faker.name.lastName(),
+        age: faker.random.number()
       }
     };
 
-    await toChannel("user-v1")(JSON.stringify(user));
-    console.log(`Produced ${id}, firstName: ${user.payload.firstName}`);
+    const { toChannel } = createProducer({
+      broker: "test-cluster",
+      name: `the-producer-${id}`
+    });
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await toChannel("user-v2")(JSON.stringify(user));
+    console.log(
+      `Produced ${id}, firstName: ${user.payload.firstName}, ${
+        user.payload.age
+      }`
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 5));
 
     id++;
   }

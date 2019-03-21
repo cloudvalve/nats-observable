@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import * as VError from "verror";
 
 import { createClient } from "./createClient";
 
@@ -16,15 +17,16 @@ const createConsumer = async (options: IConsumerOptions) => {
   });
 
   const fromChannel = (name: string): Observable<any> => {
-    const subscriptionOptions = client
-      .subscriptionOptions()
-      .setDeliverAllAvailable()
-      .setDurableName(options.name);
+    const observable = new Observable(subscriber => {
+      const subscription = client.subscribe(
+        name,
+        client
+          .subscriptionOptions()
+          .setDeliverAllAvailable()
+          .setDurableName(options.name)
+      );
 
-    const observable = Observable.create(observer => {
-      const subscription = client.subscribe(name, subscriptionOptions);
-
-      subscription.on("message", message => observer.next(message));
+      subscription.on("message", message => subscriber.next(message));
 
       // !TODO: Handle errors properly
       // !TODO: Configure manual acks; maybe possible to add another subscription?

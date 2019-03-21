@@ -10,6 +10,10 @@ const createClient = ({ clusterId, clientId }: IOptions) =>
     const stan = nats.connect(clusterId, clientId);
 
     stan.on("connect", () => resolve(stan));
+
+    stan.on("error", () => console.log("error"));
+    stan.on("timeout", () => console.log("timeout"));
+    stan.on("close", () => console.log("close"));
   });
 
 export { createClient };

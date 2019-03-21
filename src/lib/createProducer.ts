@@ -21,6 +21,8 @@ const createProducer = (options: IProducerOptions) => {
 
     return new Promise<string>((resolve, reject) =>
       client.publish(name, message, (err: Error, guid: string) => {
+        client.close();
+
         if (err) {
           return reject(
             new VError(err, `failed to publish message to channel "${name}"`)
