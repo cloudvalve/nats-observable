@@ -1,5 +1,7 @@
 # nats-observable
 
+[Demo Video](https://www.youtube.com/watch?v=F_IsZ-FHX-M)
+
 ## Usage
 
 ```js
