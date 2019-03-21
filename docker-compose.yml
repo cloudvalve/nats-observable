@@ -3,7 +3,6 @@ version: "3"
 services:
   nats-streaming:
     image: "nats-streaming:0.12.2"
-    command: "-p 4223 -m 8223"
     ports:
-      - "4223:4223"
-      - "8223:8223"
+      - "4222:4222"
+      - "8222:8222"

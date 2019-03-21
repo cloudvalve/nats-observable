@@ -1,13 +1,13 @@
-import * as VError from "verror";
 import * as nats from "node-nats-streaming";
 
 interface IOptions {
+  clusterId: string;
   clientId: string;
 }
 
-const createClient = ({ clientId }: IOptions) =>
+const createClient = ({ clusterId, clientId }: IOptions) =>
   new Promise<nats.Stan>(resolve => {
-    const stan = nats.connect("test-cluster", clientId);
+    const stan = nats.connect(clusterId, clientId);
 
     stan.on("connect", () => resolve(stan));
   });
