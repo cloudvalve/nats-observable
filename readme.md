@@ -1,6 +1,6 @@
 # nats-observable
 
-[Demo Video](https://www.youtube.com/watch?v=F_IsZ-FHX-M)
+[![Demo Video](https://img.youtube.com/vi/F_IsZ-FHX-M/hqdefault.jpg)](https://www.youtube.com/watch?v=F_IsZ-FHX-M)
 
 ## Usage
 
