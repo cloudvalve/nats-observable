@@ -1,6 +1,6 @@
 import { map, concatMap, tap, filter } from "rxjs/operators";
 
-import { createConsumer, createProducer } from "../lib";
+import { createConsumer, createProducer } from "..";
 
 interface IUser {
   firstName: string;

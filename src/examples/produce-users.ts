@@ -1,6 +1,6 @@
 import * as faker from "faker";
 
-import { createProducer } from "../lib";
+import { createProducer } from "..";
 
 const app = async () => {
   const { toChannel } = createProducer({
