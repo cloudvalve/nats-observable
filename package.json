@@ -1,12 +1,13 @@
 {
   "name": "nats-observable",
   "description": "",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "André König <hey@andrekoenig.dev>",
   "license": "MIT",
   "main": "./dist/index.js",
   "dependencies": {
     "cuid": "^2.1.6",
+    "nats": "^1.2.2",
     "node-nats-streaming": "0.0.52",
     "rxjs": "^6.4.0",
     "verror": "^1.10.0"

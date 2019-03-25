@@ -16,8 +16,11 @@ import * as cuid from "cuid";
 import { createClient } from "./createClient";
 
 interface IProducerOptions {
-  broker: string;
   name: string;
+  broker: {
+    name: string;
+    url: string;
+  };
 }
 
 type GUID = string;
@@ -34,7 +37,8 @@ const createProducer = (options: IProducerOptions): IProducer => {
   ): Promise<string> =>
     new Promise<string>(async (resolve, reject) => {
       const client = createClient({
-        clusterId: options.broker,
+        url: options.broker.url,
+        clusterId: options.broker.name,
         // ! Append a random id to the clientId to prevent collisions
         clientId: `${options.name}-${cuid()}`
       });
