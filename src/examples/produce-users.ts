@@ -5,7 +5,10 @@ import { createProducer } from "..";
 const app = async () => {
   const { toChannel } = createProducer({
     name: "user-producer",
-    broker: "test-cluster"
+    broker: {
+      name: "test-cluster",
+      url: "nats://localhost:4222"
+    }
   });
 
   while (true) {

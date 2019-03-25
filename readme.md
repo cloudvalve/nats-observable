@@ -1,5 +1,7 @@
 # nats-observable
 
+**WIP**
+
 ## Video
 
 [![Demo Video](https://img.youtube.com/vi/F_IsZ-FHX-M/hqdefault.jpg)](https://www.youtube.com/watch?v=F_IsZ-FHX-M)
@@ -10,12 +12,18 @@
 const app = async () => {
   const { fromChannel } = createConsumer({
     name: "input-extract-first-names-instance-00",
-    broker: "test-cluster"
+    broker: {
+      name: "test-cluster",
+      url: "nats://localhost:4222"
+    }
   });
 
   const { toChannel } = createProducer({
     name: "output-extract-first-names-instance-00",
-    broker: "test-cluster"
+    broker: {
+      name: "test-cluster",
+      url: "nats://localhost:4222"
+    }
   });
 
   await fromChannel("v1-user")

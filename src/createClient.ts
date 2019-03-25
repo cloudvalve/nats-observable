@@ -10,34 +10,42 @@
  *
  */
 
-import * as nats from "node-nats-streaming";
+import * as nats from "nats";
+import { connect as connectStreamingServer } from "node-nats-streaming";
+
+// import * as nats from "node-nats-streaming";
 
 interface IOptions {
   clusterId: string;
   clientId: string;
+  url: string;
 }
 
 const createClient = (options: IOptions) => {
   let wasConnected = false;
 
-  // The client shouldn't try to reconnect, but just fail fast instead
-  const stan = nats.connect(options.clusterId, options.clientId, {
-    reconnect: false
-    // !TODO: The `any` typing is because of https://github.com/nats-io/node-nats-streaming/issues/98
-  } as any);
+  const nc = nats.connect({
+    url: options.url,
+    reconnect: false,
+    encoding: "binary"
+  });
 
-  stan.once("connect", () => {
+  const sc = connectStreamingServer(options.clusterId, options.clientId, {
+    nc
+  });
+
+  nc.once("connect", () => {
     wasConnected = true;
   });
 
-  stan.once("disconnect", () => {
+  nc.once("disconnect", () => {
     // We have to call `close` because of internal cleanup routines in the NATS client
     if (wasConnected) {
-      stan.close();
+      nc.close();
     }
   });
 
-  return stan;
+  return sc;
 };
 
 export { createClient };

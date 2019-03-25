@@ -17,8 +17,11 @@ import { createClient } from "./createClient";
 import { Message } from "node-nats-streaming";
 
 interface IConsumerOptions {
-  broker: string;
   name: string;
+  broker: {
+    name: string;
+    url: string;
+  };
 }
 
 interface IConsumer {
@@ -29,8 +32,9 @@ const createConsumer = (options: IConsumerOptions): IConsumer => {
   const fromChannel = (name: string): Observable<Message> =>
     new Observable(stream => {
       const client = createClient({
-        clusterId: options.broker,
-        clientId: options.name
+        clusterId: options.broker.name,
+        clientId: options.name,
+        url: options.broker.url
       });
 
       client.once("error", err =>
