@@ -1,3 +1,16 @@
+/*
+ * @cloudvalve/nats-observable
+ *
+ * MIT Licensed
+ *
+ */
+
+/**
+ * @author André König <hey@andrekoenig.dev>
+ * @author Tyll Weiß <info@craft-interactive.de>
+ *
+ */
+
 import { map, concatMap, tap, filter } from "rxjs/operators";
 
 import { createConsumer, createProducer } from "..";
@@ -10,12 +23,18 @@ interface IUser {
 const app = async () => {
   const { fromChannel } = createConsumer({
     name: "input-extract-first-names-starting-with-a-or-t-instance-00",
-    broker: "test-cluster"
+    broker: {
+      name: "test-cluster",
+      url: "nats://localhost:4222"
+    }
   });
 
   const { toChannel } = createProducer({
     name: "output-extract-first-names-starting-with-a-or-t-instance-00",
-    broker: "test-cluster"
+    broker: {
+      name: "test-cluster",
+      url: "nats://localhost:4222"
+    }
   });
 
   await fromChannel("v1-user-first-names")

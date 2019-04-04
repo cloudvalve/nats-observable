@@ -1,8 +1,20 @@
 {
-  "name": "nats-observable",
-  "description": "",
+  "name": "@cloudvalve/nats-observable",
+  "description": "Easy peasy reactive streams backed by nats.io",
   "version": "0.2.0",
-  "author": "André König <hey@andrekoenig.dev>",
+  "author": "cloudvalve",
+  "contributors": [
+    {
+      "name": "Tyll Weiß",
+      "email": "info@craft-interactive.de",
+      "url": "https://craft-interactive.de"
+    },
+    {
+      "name": "André König",
+      "email": "hey@andrekoenig.dev",
+      "url": "https://andrekoenig.de"
+    }
+  ],
   "license": "MIT",
   "main": "./dist/index.js",
   "dependencies": {

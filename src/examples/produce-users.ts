@@ -1,3 +1,16 @@
+/*
+ * @cloudvalve/nats-observable
+ *
+ * MIT Licensed
+ *
+ */
+
+/**
+ * @author André König <hey@andrekoenig.dev>
+ * @author Tyll Weiß <info@craft-interactive.de>
+ *
+ */
+
 import * as faker from "faker";
 
 import { createProducer } from "..";
